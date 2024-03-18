@@ -1,0 +1,12 @@
+- name: transfer sql statement to remonte
+  template:
+    src: ../template/init_innodb_cluster.js.j2
+    dest: /tmp/init_innodb_cluster.js
+
+- name: create innodb cluster
+  shell: "/usr/local/mysql-shell/bin/mysqlsh root@{{ansible_host}} -p'{{mysql_root_password}}' -f /tmp/init_innodb_cluster.js"
+
+- name: remove temp file /tmp/init_user.sql
+  file:
+    dest: /tmp/init_innodb_cluster.js
+    state: absent

@@ -1,0 +1,27 @@
+---
+- name: install gcc
+  yum:
+    name: gcc
+    state: present
+
+- name: install gcc-c++
+  yum:
+    name: gcc-c++
+    state: present
+
+- name: install perl-*
+  yum:
+    name: 
+    - perl-DBD-MySQL
+    - perl-Config-Tiny
+    - perl-Log-Dispatch
+    - perl-Parallel-ForkManager
+    - perl-ExtUtils-CBuilder
+    - perl-ExtUtils-MakeMaker
+    - perl-CPAN
+    state: present
+
+- name: install sshpass
+  yum:
+    name: sshpass
+    state: present

@@ -1,0 +1,7 @@
+[mysql_server]
+192.168.88.163 ansible_user=root node_name="mysql-node1" ansible_port=2222
+192.168.88.187 ansible_user=root node_name="mysql-node2" ansible_port=2222
+192.168.88.224 ansible_user=root node_name="mysql-node3" ansible_port=2222
+
+[mysql_router]
+192.168.88.163 ansible_user=root ansible_port=2222

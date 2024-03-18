@@ -1,0 +1,28 @@
+# 安装包
+mysql_shell_package: mysql-shell-8.2.0-linux-glibc2.28-x86-64bit.tar.gz
+mysql_router_package: mysql-router-8.2.0-linux-glibc2.28-x86_64.tar.xz
+# 集群名称
+cluster_name: mysql_cluster
+
+# innodb集群
+mysql_cluster:
+  - name: mysql-node1
+    ip: '192.168.88.163'
+  - name: mysql-node2
+    ip: '192.168.88.187'
+  - name: mysql-node3
+    ip: '192.168.88.224'
+
+# mysql_router服务器
+mysql_router_server:
+  - '192.168.88.183'
+
+# 添加新的innodb节点
+add_new_nodes:
+  enabled: false  # true or false
+  nodes:
+  - name: mysql-node3
+    ip: '192.168.88.224'
+
+# 启用write_set配置
+use_write_set: 1

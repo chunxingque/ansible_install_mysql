@@ -1,0 +1,11 @@
+# 主从复制账号密码
+mysql_repl_user: repl
+mysql_repl_password: repl0352
+
+## master 和 slave 对应的IP
+master_ip: 192.168.88.163
+slave_ips:
+  - 192.168.88.224
+
+## 是否开启基于writeset的并行复制机制
+use_write_set: 1

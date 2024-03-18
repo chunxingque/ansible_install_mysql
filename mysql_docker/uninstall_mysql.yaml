@@ -1,0 +1,19 @@
+---
+- hosts: mysql_server
+  remote_user: root
+  vars_files:
+  - vars/common_config.yaml
+  
+  tasks:
+  - name: stop mysql
+    shell: docker stop {{mysql_name}}
+    ignore_errors: True
+  
+  - name: remove mysql
+    shell: docker rm {{mysql_name}}
+    ignore_errors: True
+  
+  - name: remove data file
+    file: 
+      path: "{{mysql_base_dir}}/{{mysql_name}}"
+      state: absent

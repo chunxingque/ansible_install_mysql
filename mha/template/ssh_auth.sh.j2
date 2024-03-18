@@ -1,0 +1,22 @@
+#!/bin/bash
+
+ssh_auth() {
+    #generate new public-key
+    if [ ! -f $HOME/.ssh/id_rsa ];then
+        ssh-keygen -f $HOME/.ssh/id_rsa -t rsa -N ''
+    fi
+    #install sshpass
+    if command -v sshpass > /dev/null 2>&1;then
+        echo "sshpass is already installed."
+    else
+        yum install sshpass -y
+    fi
+}
+
+ssh_auth
+
+sshpass -p '{{ linux_root_password }}' ssh-copy-id -o StrictHostKeyChecking=no {{ansible_user}}@{{master_ip}}
+{% for slave_ip in slave_ips %}
+sshpass -p '{{ linux_root_password }}' ssh-copy-id -o StrictHostKeyChecking=no {{ansible_user}}@{{slave_ip}}
+{% endfor %}
+

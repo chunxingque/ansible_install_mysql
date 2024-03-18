@@ -1,0 +1,9 @@
+- hosts: localhost
+  vars_files:
+  - vars/var_mha.yaml
+
+  tasks:
+    - name: generate hosts file
+      template: 
+        src: template/mha_hosts.j2
+        dest: ./hosts

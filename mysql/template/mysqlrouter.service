@@ -1,0 +1,16 @@
+[Unit]
+Description=mysql router
+After=network.target
+After=syslog.target
+
+[Service]
+Type=notify
+User=root
+Group=root
+ExecStart=/usr/local/mysql-router/bin/mysqlrouter -c /data/mysql-router/mysqlrouter.conf
+LimitNOFILE = 100000
+Restart=on-failure
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+
+
+
+{% for item in mysql_cluster %}
+
+{% if item.ip == mysql_cluster[0].ip %}
+var cluster = dba.createCluster('mysql_cluster');
+{% else %}
+cluster.addInstance('root@{{item.name}}:{{mysql_port}}',{password: "{{mysql_root_password}}", recoveryMethod: "clone"});
+{% endif %}
+
+{% endfor %}
+
+
+

@@ -1,0 +1,12 @@
+  - name: transfer sql statement to remonte
+    template:
+     src: ../template/init_user.sql
+     dest: /tmp/init_user.sql
+
+  - name: init mysql user
+    shell: mysql -hlocalhost -uroot -S /tmp/mysql.sock < /tmp/init_user.sql
+
+  - name: remove temp file /tmp/init_user.sql
+    file:
+     dest: /tmp/init_user.sql
+     state: absent

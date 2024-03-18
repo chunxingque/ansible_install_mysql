@@ -1,0 +1,56 @@
+
+- name: Add hosts to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: "{{ item.ip }}  {{ item.name }}"
+    line: "{{ item.ip }}  {{ item.name }}"
+  loop: "{{ mysql_cluster | flatten(1) }}"
+
+# 把安装包解压到/usr/local/目录
+- name: unarchive to /usr/local/
+  unarchive:
+    src: "{{ mysql_packages_dir }}/{{ mysql_router_package }}"
+    dest: /usr/local/
+
+# 创建软链接文件
+- name: "create sotfware link"
+  when: mysql_router_package.find('tar.xz') != -1
+  file:
+    src: /usr/local/{{ mysql_router_package | regex_replace('.tar.xz','') }}
+    dest: "/usr/local/mysql-router"
+    state: link
+
+# 导出PATH环境变量
+- name: export path env variable
+  lineinfile:
+    path: /etc/profile
+    line: "export PATH=/usr/local/mysql-router/bin:$PATH"
+    insertafter: EOF
+
+- name: "create /data/mysql-router"
+  file:
+    path: /data/mysql-router
+    state: directory
+
+- name: "mysql-router  bootstrap"
+  shell: "/usr/local/mysql-router/bin/mysqlrouter --bootstrap root:'{{mysql_root_password}}'@{{mysql_cluster[0].name}}:3306 --directory /data/mysql-router --user=root --force"
+  register: bootstrap_result
+- name: bootstrap cmd
+  debug: 
+    var: bootstrap_result.cmd
+
+# - name: "mysql-router  start"
+#   shell: "/data/mysql-router/start.sh"
+
+- name: create systemd config file
+  template:
+    src: ../../template/mysqlrouter.service
+    dest: /usr/lib/systemd/system/mysqlrouter.service
+
+- name: sytemctl start mysql
+  systemd_service:
+    name: mysqlrouter
+    state: started
+    enabled: true
+    daemon_reload: true
+

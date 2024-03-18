@@ -1,0 +1,10 @@
+# mysql镜像
+image: mysql
+tag: "8.0"
+mysql_root_password: mysql0352
+# 基础目录,实际目录: mysql_base_dir+mysql_name
+mysql_base_dir: "/data/mysql"
+
+# mysql配置参数
+# 是否启用log_bin
+log_bin: true

@@ -1,0 +1,12 @@
+- name: copy add_innodb_nodes.js.j2 
+  template:
+    src: ../template/add_innodb_nodes.js.j2
+    dest: /tmp/add_innodb_nodes.js
+
+- name: add innodb nodes
+  shell: "/usr/local/mysql-shell/bin/mysqlsh root@{{mysql_cluster[0].name}} -p'{{mysql_root_password}}' -f /tmp/add_innodb_nodes.js"
+
+- name: remove temp file /tmp/add_innodb_nodes.js
+  file:
+    dest: /tmp/add_innodb_nodes.js
+    state: absent

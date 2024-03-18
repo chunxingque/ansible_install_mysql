@@ -1,0 +1,44 @@
+---
+- hosts: mha_nodes
+  remote_user: root
+  become_user: root
+  vars_files:
+  - vars/var_mha.yaml
+  tags: install_nodes 
+  
+  tasks:
+  - name: install dependents
+    import_tasks: common/install_dependents.yaml
+
+  - name: install mha node
+    import_tasks: common/install_node.yaml
+
+  - name: create mha user
+    when: master_ip in ansible_all_ipv4_addresses
+    import_tasks: common/create_mha_user.yaml
+  
+  - name: ssh auth
+    import_tasks: common/ssh_auth.yaml
+
+  - name: bind vip
+    when: master_ip in ansible_all_ipv4_addresses
+    # shell: /sbin/ifconfig {{ net_work_interface }}:0 {{ vip }}
+    shell: /usr/sbin/ip addr add {{vip}} dev {{ net_work_interface }} label {{ net_work_interface }}:0
+
+
+- hosts: mha_manager
+  remote_user: root
+  become_user: root
+  vars_files:
+  - vars/var_mha.yaml
+  tags: install_manager
+
+  tasks:
+  # - name: install dependents
+  #   import_tasks: common/install_dependents.yaml
+  
+  # - name: ssh auth
+  #   import_tasks: common/ssh_auth.yaml
+  
+  - name: install mha manager
+    import_tasks: common/install_manager.yaml

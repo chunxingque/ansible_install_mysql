@@ -1,0 +1,13 @@
+---
+- hosts: 192.168.15.209
+  remote_user: root
+  become_user: root
+  vars_files:
+  - vars/var_mha.yaml
+
+  tasks:
+  - name: If follow=no, /path/to/link will become a file and be overwritten by contents of foo.conf
+    ansible.builtin.copy:
+      src: /usr/local/src/{{mha_manager | replace('.tar.gz','')}}/samples/
+      dest: /usr/local/mha-manager/bin
+      remote_src: true

@@ -1,0 +1,29 @@
+###### mysql相关配置 #######
+# linux root密码：用于ssh免密配置
+linux_root_password: '!szzsmw123'
+# mysql root密码：用来创建mha账号
+mysql_root_password: mtls0352
+# 主从复制账号密码
+mysql_repl_user: repl
+mysql_repl_password: repl0352
+# mha账号密码
+mysql_mha_user: mha
+mysql_mha_password: mha0352
+# mysql 数据目录
+mysql_data_dir: /data/mysql
+mysql_port: 3306
+
+## master 和 slave 对应的IP
+master_ip: 192.168.15.220
+slave_ips:
+  - 192.168.15.221
+  - 192.168.15.209
+
+###### mha配置 #######
+manager_ip: "192.168.15.221"
+vip: "192.168.15.222/24"
+# 网卡
+net_work_interface: "ens192"
+mha_packages: packages
+mha_node: mha4mysql-node-0.58.tar.gz
+mha_manager: mha4mysql-manager-0.58.tar.gz

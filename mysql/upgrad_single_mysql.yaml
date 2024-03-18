@@ -1,0 +1,50 @@
+---
+ - hosts: mysql_server
+   remote_user: root
+   vars_files:
+    - vars/common_config.yaml
+   tasks:
+
+    - name: stop mysql service 
+      when: ansible_distribution_major_version != "6"
+      systemd:
+       name: mysql
+       state: stopped
+       daemon_reload: yes
+
+    - name: backup link file
+      shell: "mv {{ mysql_base_dir }} {{mysql_base_dir}}_backup_{{ ansible_date_time.iso8601_basic_short | replace('T','-') }}"
+
+    - name: unarchive new package to /usr/local/
+      unarchive:
+       src: "{{ mysql_packages_dir}}/{{mysql_package}}"
+       dest: /usr/local/
+       owner: "{{mysql_user}}"
+       group: "{{mysql_group}}"
+
+    - name: change owner to mysql user
+      when: mysql_package.find('tar.gz') != -1
+      file:
+        path: /usr/local/{{ mysql_package | regex_replace('.tar.gz','') }}
+        owner: "{{mysql_user}}"
+        group: "{{mysql_group}}"
+        recurse: yes
+
+    - name: "make link to {{mysql_base_dir}}"
+      when: mysql_package.find('tar.gz') != -1
+      file:
+        src: /usr/local/{{ mysql_package | regex_replace('.tar.gz','') }}
+        dest: "{{mysql_base_dir}}"
+        state: link
+        owner: "{{mysql_user}}"
+        group: "{{mysql_group}}"
+
+    - name: start mysql service
+      when: ansible_distribution_major_version == "6"
+      systemd:
+       name: mysql
+       state: started
+       daemon_reload: yes
+           
+       
+    

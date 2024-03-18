@@ -1,0 +1,9 @@
+---
+- hosts: mysql_server
+  remote_user: root
+  vars_files:
+  - vars/common_config.yaml
+  
+  tasks:
+  - name: create user and config file
+    import_tasks: common/install_mysql.yaml

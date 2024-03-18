@@ -1,0 +1,20 @@
+# 把安装包解压到/usr/local/目录
+- name: unarchive to /usr/local/
+  unarchive:
+    src: "{{ mysql_packages_dir }}/{{ mysql_shell_package }}"
+    dest: /usr/local/
+
+# 创建软链接文件
+- name: "make link to {{mysql_base_dir}}"
+  when: mysql_shell_package.find('tar.gz') != -1
+  file:
+    src: /usr/local/{{ mysql_shell_package | regex_replace('.tar.gz','') }}
+    dest: "/usr/local/mysql-shell"
+    state: link
+
+# 导出PATH环境变量
+- name: export path env variable
+  lineinfile:
+    path: /etc/profile
+    line: "export PATH=/usr/local/mysql-shell/bin:$PATH"
+    insertafter: EOF

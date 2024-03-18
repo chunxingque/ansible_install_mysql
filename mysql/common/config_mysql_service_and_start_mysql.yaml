@@ -1,0 +1,31 @@
+- name: create systemd config file
+  when: ansible_distribution_major_version != "6"
+  template:
+    src: ../template/mysql.service
+    dest: /usr/lib/systemd/system/mysql.service
+
+- name: sytemctl start mysql
+  when: ansible_distribution_major_version != "6"
+  systemd_service:
+    name: mysql
+    state: started
+    enabled: true
+    daemon_reload: true
+
+- name: config sysv start script
+  when: ansible_distribution_major_version == "6"
+  copy:
+    remote_src: yes
+    src: "{{mysql_base_dir}}/support-files/mysql.server"
+    dest: /etc/init.d/mysqld
+    mode: 0755
+
+- name: service mysql start
+  when: ansible_distribution_major_version == "6"
+  service: 
+    name: mysqld
+    state: started
+
+- name: config mysql.service start up on boot
+  when: ansible_distribution_major_version == "6"
+  shell: chkconfig mysqld on

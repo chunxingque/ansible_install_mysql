@@ -1,0 +1,5 @@
+*.tar.gz
+*.tar.xz
+*.rpm
+!mha4mysql-manager-0.58.tar.gz
+!mha4mysql-node-0.58.tar.gz

@@ -1,0 +1,80 @@
+---
+# 把安装包解压到/usr/local/目录
+- name: unarchive to /usr/local/
+  unarchive:
+    src: "{{ mysql_packages_dir }}/{{ mysql_package }}"
+    dest: /usr/local/
+    owner: "{{mysql_user}}"
+    group: "{{mysql_group}}"
+
+# 设置权限
+- name: change owner to mysql user
+  when: mysql_package.find('tar.gz') != -1
+  file:
+    path: /usr/local/{{ mysql_package | regex_replace('.tar.gz','') }}
+    owner: "{{mysql_user}}"
+    group: "{{mysql_group}}"
+    recurse: yes
+
+- name: change owner to mysql user
+  when: mysql_package.find('tar.xz') != -1
+  file:
+    path: /usr/local/{{ mysql_package | regex_replace('.tar.xz','') }}
+    owner: "{{mysql_user}}"
+    group: "{{mysql_group}}"
+    recurse: yes
+
+# 创建软链接文件
+- name: "make link to {{mysql_base_dir}}"
+  when: mysql_package.find('tar.gz') != -1
+  file:
+    src: /usr/local/{{ mysql_package | regex_replace('.tar.gz','') }}
+    dest: "{{mysql_base_dir}}"
+    state: link
+    owner: "{{mysql_user}}"
+    group: "{{mysql_group}}"
+
+- name: "make link to {{mysql_base_dir}}"
+  when: mysql_package.find('tar.xz') != -1
+  file:
+    src: /usr/local/{{ mysql_package | regex_replace('.tar.xz','') }}
+    dest: "{{mysql_base_dir}}"
+    state: link
+    owner: "{{mysql_user}}"
+    group: "{{mysql_group}}"
+
+# 导出mysql的库文件
+- name: export mysql share object (*.os)
+  template:
+    src: ../template/mysql.conf
+    dest: /etc/ld.so.conf.d/mysql.conf
+
+# 加载共享库
+- name: load share object
+  shell: ldconfig
+
+# 导出PATH环境变量
+- name: export path env variable
+  lineinfile:
+    path: /etc/profile
+    line: "export PATH={{mysql_base_dir}}/bin/:$PATH"
+    insertafter: EOF
+
+- name: export path env to /root/.bashrc
+  lineinfile:
+    path: /root/.bashrc
+    line: export PATH={{mysql_base_dir}}/bin/:$PATH
+    insertafter: EOF  
+
+- name: remove /usr/include/mysql
+  file:
+    dest: /usr/include/mysql
+    state: absent
+
+# 导出头文件
+- name: export include file to /usr/include/mysql
+  file:
+    src: "{{mysql_base_dir}}/include"
+    dest: /usr/include/mysql
+    state: link
+

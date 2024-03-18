@@ -1,0 +1,76 @@
+---
+ - hosts: mysql_server
+   remote_user: root
+   become_user: root
+   vars_files:
+    - vars/common_config.yaml
+    
+   tasks:
+    - name: stop mysql-service in rhel-6.x
+      when: ansible_distribution_major_version == "6"
+      service: 
+       name: mysqld
+       state: stopped
+
+    - name: stop mysql-service in rhel>=7.x
+      when: ansible_distribution_major_version != "6"
+      systemd: 
+       name: mysql
+       state: stopped
+       enabled: false
+    
+    - name: delete mysql service
+      file:
+       path: /usr/lib/systemd/system/mysql.service
+       state: absent
+
+    - name: delete mysql user
+      user:
+       name: "{{mysql_user}}"
+       remove: yes
+       state: absent
+
+    - name: delete mysql conf
+      file:
+       path: /etc/my.cnf
+       state: absent
+
+    # 删除头文件的软链接
+    - name: remove /usr/include/mysql
+      file:
+       path: /usr/include/mysql
+       state: absent
+
+    - name: remove program link file
+      file:
+       path: "{{mysql_base_dir}}"
+       state: absent
+  
+    - name: remove program file
+      when: mysql_package.find('tar.gz') != -1
+      file:
+       path: /usr/local/{{mysql_package | regex_replace('.tar.gz','') }}
+       state: absent
+    
+    - name: remove program file
+      when: mysql_package.find('tar.xz') != -1
+      file:
+       path: /usr/local/{{mysql_package | regex_replace('.tar.xz','') }}
+       state: absent
+
+    - name: remove data file
+      file: 
+       path: "{{mysql_data_dir}}"
+       state: absent
+    
+    - name: remove mysql /etc/profile path env
+      ansible.builtin.lineinfile:
+        path: /etc/profile
+        state: absent
+        regexp: 'PATH={{mysql_base_dir}}/bin/'
+    
+    - name: remove mysql /root/.bashrc path env
+      ansible.builtin.lineinfile:
+        path: /root/.bashrc
+        state: absent
+        regexp: 'PATH={{mysql_base_dir}}/bin/'

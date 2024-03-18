@@ -1,0 +1,15 @@
+[mysql_server]
+{% if add_new_nodes.enabled %}
+{% for item in add_new_nodes.nodes %}
+{{item.ip}} ansible_user=root node_name="{{item.name}}"
+{% endfor %}
+{% else %}
+{% for item in mysql_cluster %}
+{{item.ip}} ansible_user=root node_name="{{item.name}}"
+{% endfor %}
+{% endif %}
+
+[mysql_router]
+{% for item in mysql_router_server %}
+{{item}} ansible_user=root
+{% endfor %}

@@ -1,0 +1,76 @@
+---
+- hosts: mysql_server
+  vars_files:
+  - vars/common_config.yaml
+  - vars/innodb_cluster.yaml
+  tags: install_mysql  # 安装mysql
+
+  tasks:
+  - name: config hosts
+    import_tasks: common/config_hosts.yaml
+    
+  - name: create user and config file
+    import_tasks: common/create_user_and_config_file.yaml
+
+  # - name: install mysql dependents 
+  #   import_tasks: common/install_mysql_dependents.yaml
+
+  - name: install mysql
+    import_tasks: common/install_mysql.yaml
+
+  - name: init mysql datadir
+    import_tasks: common/initialize_mysql_datadir.yaml
+
+  - name: config mysql service and start mysql
+    import_tasks: common/config_mysql_service_and_start_mysql.yaml
+
+  - name: sleep 15 seconds
+    shell: sleep 15
+
+  - name: initialize user
+    import_tasks: common/initialize_user.yaml
+
+- hosts: mysql_server
+  vars_files:
+  - vars/common_config.yaml
+  - vars/innodb_cluster.yaml
+  tags: install_mysql_shell  # 安装mysql_shell
+
+  tasks:
+  - name: config hosts
+    import_tasks: common/innodb_cluster/install_mysql_shell.yaml
+
+- hosts: mysql_server
+  vars_files:
+  - vars/common_config.yaml
+  - vars/innodb_cluster.yaml
+  tags: init_cluster   # 初始化innodb集群
+
+  tasks:
+  - name: create innodb cluster
+    when: ansible_host == mysql_cluster[0].ip 
+    import_tasks: common/innodb_cluster/initialize_innodb_cluster.yaml
+
+
+- hosts: mysql_router
+  vars_files:
+  - vars/common_config.yaml
+  - vars/innodb_cluster.yaml
+  tags: install_mysql_router  # 安装mysql_router
+  tasks:
+
+  - name: install mysql router
+    import_tasks: common/innodb_cluster/install_mysql_router.yaml
+
+
+- hosts: mysql_server
+  vars_files:
+  - vars/common_config.yaml
+  - vars/innodb_cluster.yaml
+  tags: add_nodes  # 添加新节点
+
+  tasks:
+  - name: create innodb cluster
+    when: ansible_host == add_new_nodes[0].ip
+    import_tasks: common/innodb_cluster/add_innodb_nodes.yaml
+  

@@ -1,0 +1,10 @@
+- name: "update hostname"
+  hostname: 
+    name: "{{node_name}}"
+
+- name: Add hosts to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: "{{ item.ip }}  {{ item.name }}"
+    line: "{{ item.ip }}  {{ item.name }}"
+  loop: "{{ mysql_cluster | flatten(1) }}"

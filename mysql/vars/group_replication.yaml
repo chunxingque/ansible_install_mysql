@@ -1,0 +1,22 @@
+# 主复制账号密码
+mysql_repl_user: repl
+mysql_repl_password: repl0352
+# 组名uuid: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa
+group_name_uuid: "b7fbede1-2827-43a4-92f1-bd288607b8f9"
+# mgr模式, 默认单主模式
+single_primary_mode: "on"  # 单主模式,on or off
+enforce_update_everywhere_checks: "off" # 多主模式,on or off
+# 组复制端口
+mysql_mgr_port: 33061
+# 组复制集群
+mysql_cluster:
+  - name: mysql-node1
+    ip: '192.168.88.163'
+  - name: mysql-node2
+    ip: '192.168.88.187'
+  - name: mysql-node3
+    ip: '192.168.88.224'
+
+# 启用组复制
+with_mysql_group_replication: 1
+mysql_binlog_format: row

@@ -1,0 +1,7 @@
+[mha_nodes]
+192.168.15.209 ansible_user=root
+192.168.15.220 ansible_user=root
+192.168.15.221 ansible_user=root
+
+[mha_manager]
+192.168.15.221 ansible_user=root

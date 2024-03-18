@@ -1,0 +1,18 @@
+- hosts: "{{slave_ip}}"
+  remote_user: root
+  vars_files:
+  - vars/var_mha.yaml
+
+  tasks:
+  - name: stransfer add_recover_slave.sql to master
+    template:
+      src: template/add_recover_slave.sql
+      dest: /tmp/add_recover_slave.sql
+
+  - name: slave replication
+    shell: mysql -h localhost -P {{mysql_port}} -u root -p{{mysql_root_password}} < /tmp/add_recover_slave.sql
+
+  - name: remove /tmp/add_recover_slave.sql
+    file:
+      dest: /tmp/add_recover_slave.sql
+      state: absent

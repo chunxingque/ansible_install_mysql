@@ -1,0 +1,15 @@
+--- 
+- name: unarchive {{ mtls_mha_node }} to /usr/local/src
+  unarchive:
+    src: "{{ mha_packages + '/' + mha_node }}"
+    dest: /usr/local/src
+
+- name: compile and install mha-node
+  shell: cd /usr/local/src/{{mha_node| replace('.tar.gz','')}} && perl Makefile.PL && make && make install
+
+- name: export path env to /root/.bashrc
+  lineinfile:
+    path: /root/.bashrc
+    line: export PATH=/usr/local/bin:$PATH
+    insertafter: EOF
+   

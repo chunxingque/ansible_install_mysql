@@ -1,0 +1,30 @@
+---
+- name: create mysql data dir
+  file:
+    path: "{{mysql_base_dir}}/{{mysql_name}}/data"
+    state: directory
+
+- name: create mysql conf.d dir
+  file:
+    path: "{{mysql_base_dir}}/{{mysql_name}}/conf.d"
+    state: directory
+
+- name: config my.cnf for mysql-5.7.x
+  when: " '5.7' in tag "
+  template:
+    src: ../template/5.7/my.cnf
+    dest: "{{mysql_base_dir}}/{{mysql_name}}/conf.d/my.cnf"
+    backup: yes
+
+- name: config my.cnf for mysql-8.x.x
+  when: " '8.' in tag "
+  template:
+    src: ../template/8/my.cnf
+    dest: "{{mysql_base_dir}}/{{mysql_name}}/conf.d/my.cnf"
+    backup: yes
+
+- name: "Start mysql container"
+  shell: "docker run -itd --name {{mysql_name}} --restart=unless-stopped --privileged=true -p {{mysql_port}}:3306 -v {{mysql_base_dir}}/{{mysql_name}}/conf.d:/etc/mysql/conf.d -v {{mysql_base_dir}}/{{mysql_name}}/data:/var/lib/mysql -v /etc/localtime:/etc/localtime:ro -e LANG=C.UTF-8 -e MYSQL_ROOT_PASSWORD={{mysql_root_password}} {{image}}:{{tag}}"
+  register: command
+- name: output_command
+  debug: var=command.cmd

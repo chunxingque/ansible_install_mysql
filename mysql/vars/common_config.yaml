@@ -1,0 +1,44 @@
+---
+# mysql 安装包所在的目录
+mysql_packages_dir: package
+# mysql 安装包
+# mysql_package: mysql-5.7.43-linux-glibc2.12-x86_64.tar.gz
+mysql_package: mysql-8.2.0-linux-glibc2.28-x86_64.tar.xz
+# mysql_package: mysql-8.0.35-linux-glibc2.28-x86_64.tar.xz
+# mysql运行的系统用户
+mysql_user: mysql
+mysql_group: mysql
+# mysql安装包的软链接目录
+mysql_base_dir: /usr/local/mysql
+# mysql 数据目录
+mysql_data_dir: /data/mysql
+mysql_port: 3306
+mysql_root_password: mtls0352
+# 创建远程root用户
+mysql_remote_user:
+  enable: true
+  host: '%'
+  user: root
+  password: mtls0352
+# 创建backup用户
+mysql_backup_user:
+  enable: false
+  host: '%'
+  user: backup
+  password: DX3906
+
+# mysql 配置文件模版
+mysql_binlog_format: row
+mysql_innodb_log_files_in_group: 16
+mysql_innodb_log_file_size: 256M
+mysql_innodb_log_buffer_size: 64M
+mysql_innodb_open_files: 65535
+mysql_max_connections: 1000
+mysql_thread_cache_size: 256
+mysql_sync_binlog: 1
+mysql_binlog_cache_size: 64K
+mysql_innodb_online_alter_log_max_size: 128M
+mysql_performance_schema: 'on'
+use_write_set: 0
+# 集群配置，默认即可
+with_mysql_group_replication: 0   # 组复制

@@ -1,0 +1,32 @@
+- hosts: localhost
+  vars_files:
+  - vars/group_replication.yaml
+  tags: group_replication
+
+  tasks:
+    - name: generate hosts file
+      template: 
+        src: template/hosts/mysql_cluster_hosts.j2
+        dest: ./hosts
+
+- hosts: localhost
+  vars_files:
+  - vars/master_slaves.yaml
+  tags: master_slaves
+
+  tasks:
+    - name: generate hosts file
+      template: 
+        src: template/hosts/master_slaves_hosts.j2
+        dest: ./hosts
+
+- hosts: localhost
+  vars_files:
+  - vars/innodb_cluster.yaml
+  tags: innodb_cluster
+
+  tasks:
+    - name: generate hosts file
+      template: 
+        src: template/hosts/mysql_innodb_hosts.j2
+        dest: ./hosts

@@ -1,0 +1,4 @@
+[mysql_server]
+{% for item in add_new_nodes %}
+{{item.ip}} ansible_user=root node_name="{{item.name}}"
+{% endfor %}

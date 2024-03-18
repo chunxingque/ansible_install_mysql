@@ -1,0 +1,80 @@
+---
+- hosts: mha_manager
+  remote_user: root
+  become_user: root
+  vars_files:
+  - vars/var_mha.yaml
+  tags: uninstall_manager
+  
+  tasks:
+  - name: kill mha_manager
+    shell: /usr/local/bin/masterha_stop --conf=/etc/masterha/app1.cnf
+    register: kill_result
+  - debug: var=kill_result.stdout_lines
+
+  - name: remove /etc/masterha
+    file:
+      path: /etc/masterha
+      state: absent
+  
+  - name: remove /var/log/masterha
+    file:
+      path: /var/log/masterha
+      state: absent
+  
+  - name: remove /usr/local/masterha
+    file: 
+      path: "/usr/local/masterha"
+      state: absent
+  
+  - name: remove /usr/local/bin/masterha_*
+    shell: rm -f /usr/local/bin/masterha_*
+
+  - name: "remove /usr/local/src/{{mha_manager | replace('.tar.gz','')}}"
+    file: 
+      path: "/usr/local/src/{{mha_manager | replace('.tar.gz','')}}"
+      state: absent
+  
+  - name: remove /usr/local/bin/master_ip_online_change
+    file:
+      path: /usr/local/bin/master_ip_online_change
+      state: absent
+  
+  - name: remove /usr/local/bin/master_ip_failover
+    file:
+      path: /usr/local/bin/master_ip_failover
+      state: absent
+  
+
+- hosts: mha_nodes
+  remote_user: root
+  become_user: root
+  vars_files:
+  - vars/var_mha.yaml
+  tags: uninstall_nodes
+  
+  tasks:
+  - name: "remove /usr/local/src/{{mha_node| replace('.tar.gz','')}}"
+    file: 
+      path: "/usr/local/src/{{mha_node| replace('.tar.gz','')}}"
+      state: absent
+  
+  - name: remove apply_diff_relay_logs
+    file: 
+      path: /usr/local/bin/apply_diff_relay_logs
+      state: absent
+  
+  - name: remove filter_mysqlbinlog
+    file: 
+      path: /usr/local/bin/filter_mysqlbinlog
+      state: absent
+  
+  - name: remove purge_relay_logs
+    file: 
+      path: /usr/local/bin/purge_relay_logs
+      state: absent
+  
+  - name: remove save_binary_logs
+    file: 
+      path: /usr/local/bin/save_binary_logs
+      state: absent

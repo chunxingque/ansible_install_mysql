@@ -1,0 +1,8 @@
+[mha_nodes]
+{{master_ip}} ansible_user=root
+{% for ip in slave_ips %}
+{{ip}} ansible_user=root
+{% endfor %}
+
+[mha_manager]
+{{manager_ip}} ansible_user=root

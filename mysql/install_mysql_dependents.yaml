@@ -1,0 +1,8 @@
+---
+ - hosts: mysql_server
+   remote_user: root
+   vars_files:
+    - vars/common_config.yaml
+   tasks:    
+    - name: install mysql dependents 
+      import_tasks: common/install_mysql_dependents.yaml

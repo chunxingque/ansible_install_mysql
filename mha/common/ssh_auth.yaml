@@ -1,0 +1,14 @@
+
+- name: create ssh_auth.sh
+  template:
+    src: ../template/ssh_auth.sh.j2
+    dest: /tmp/ssh_auth.sh
+    mode: 0755
+
+- name: sh ssh_auth.sh
+  shell: /tmp/ssh_auth.sh
+
+- name: remove /tmp/ssh_auth.sh
+  file:
+    dest: /tmp/ssh_auth.sh
+    state: absent

@@ -1,0 +1,57 @@
+--- 
+- name: unarchive {{ mha_manager }} to /usr/local/src
+  unarchive:
+    src: "{{ mha_packages + '/' + mha_manager }}"
+    dest: /usr/local/src
+
+- name: compile and install mha_manager to /usr/local/bin
+  shell: cd /usr/local/src/{{mha_manager | replace('.tar.gz','')}} && perl Makefile.PL && make && make install
+
+- name: copy master_ip_failover to /usr/local/bin
+  template: 
+   src: ../template/master_ip_failover
+   dest: /usr/local/bin/master_ip_failover
+   mode: 755
+
+- name: copy master_ip_online_change to /usr/local/bin
+  template: 
+   src: ../template/master_ip_online_change
+   dest: /usr/local/bin/master_ip_online_change
+   mode: 755
+
+- name: add /usr/local/bin to /root/.bashrc PATH
+  lineinfile:
+    path: /root/.bashrc
+    line: export PATH=/usr/local/bin:$PATH
+    insertafter: EOF
+
+- name: create /etc/masterha dir
+  file:
+    path: /etc/masterha
+    state: directory
+
+- name: copy mha app1.cnf to /etc/masterha
+  template:
+   src: ../template/app1.cnf
+   dest: /etc/masterha/app1.cnf
+
+
+- name: create /usr/local/masterha dir
+  file:
+    path: /usr/local/masterha
+    state: directory
+
+- name: copy start_mha.sh to /usr/local/masterha
+  template: 
+    src: ../template/start_mha.sh
+    dest: /usr/local/masterha/start_mha.sh
+    mode: 755
+
+- name: copy stop_mha.sh to /usr/local/masterha
+  template: 
+    src: ../template/stop_mha.sh
+    dest: /usr/local/masterha/stop_mha.sh
+    mode: 755
+
+- name: start mha manager
+  shell: /usr/local/masterha/start_mha.sh

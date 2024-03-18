@@ -1,0 +1,6 @@
+
+
+var cluster = dba.getCluster();
+{% for item in add_new_nodes %}
+cluster.addInstance('root@{{item.name}}:{{mysql_port}}',{password: "{{mysql_root_password}}", recoveryMethod: "clone"});
+{% endfor %}
